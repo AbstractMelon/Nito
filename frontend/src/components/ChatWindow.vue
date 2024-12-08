@@ -5,8 +5,14 @@
         <div
           v-for="message in messages"
           :key="message.id"
-          :class="['message', message.isSender ? 'sent' : 'received']"
+          :class="['message', message.isSender ? 'received' : 'sent']"
         >
+          <div class="message-header">
+            <span class="sender-name">{{ message.senderName }}</span>
+            <span class="message-time">{{
+              formatTimestamp(message.timestamp)
+            }}</span>
+          </div>
           <div class="message-content">{{ message.text }}</div>
         </div>
       </div>
@@ -25,10 +31,8 @@
 </template>
 
 <script>
-import { ref, onMounted, watch, watchEffect } from "vue";
+import { ref, onMounted, watchEffect } from "vue";
 import MessageService from "../services/MessageService";
-import EncryptionService from "../services/EncryptionService";
-import { importKeyFromHex } from "../utils/Encryption";
 
 export default {
   props: {
@@ -39,16 +43,37 @@ export default {
     const newMessage = ref("");
     const messageContainer = ref(null);
 
+    // Manually format the timestamp into a more readable format (e.g., 12:33 AM)
+    const formatTimestamp = (timestamp) => {
+      const date = new Date(timestamp);
+      const hours = date.getHours();
+      const minutes = date.getMinutes();
+      const ampm = hours >= 12 ? "PM" : "AM";
+
+      // Convert hours from 24-hour format to 12-hour format
+      const formattedHours = hours % 12 || 12;
+      const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+
+      return `${formattedHours}:${formattedMinutes} ${ampm}`;
+    };
+
     // Fetch messages for the selected user
     const fetchMessages = async () => {
       if (props.selectedUser && props.selectedUser.id) {
-        const userId = props.selectedUser.id; // Use the selected user's ID
+        const userId = props.selectedUser.id;
         const response = await MessageService.getMessages(userId);
-        console.log(response);
 
         const decryptedMessages = await Promise.all(
           response.map(async (message) => {
-            return { ...message, text: message.content };
+            const isSender = message.senderId === userId; // Check if the current user is the sender
+            const senderName = isSender ? "Other User" : "You";
+            return {
+              ...message,
+              text: message.content,
+              senderName, // Add sender name
+              timestamp: message.timestamp,
+              isSender, // Mark message as sent or received
+            };
           })
         );
 
@@ -59,7 +84,7 @@ export default {
 
     const sendMessage = async () => {
       if (newMessage.value.trim()) {
-        const userId = props.selectedUser.id; // Use the selected user's ID
+        const userId = props.selectedUser.id;
         await MessageService.sendMessage(userId, newMessage.value);
         newMessage.value = "";
         await fetchMessages();
@@ -75,12 +100,11 @@ export default {
     // Automatically fetch messages whenever selectedUser changes
     watchEffect(() => {
       if (props.selectedUser) {
-        fetchMessages(); // Fetch messages when selectedUser changes
+        fetchMessages();
       }
     });
 
     onMounted(() => {
-      // Initial fetch in case there is already a selected user
       if (props.selectedUser) {
         fetchMessages();
       }
@@ -91,6 +115,7 @@ export default {
       newMessage,
       sendMessage,
       messageContainer,
+      formatTimestamp,
     };
   },
 };
@@ -105,7 +130,7 @@ export default {
 }
 
 .chat-window {
-  background-color: #212121;
+  background-color: #2f3136; /* Discord dark background */
   border-radius: 8px;
   width: 100%;
   height: 85vh;
@@ -124,43 +149,58 @@ export default {
 }
 
 .message {
-  margin: 10px 0;
-  padding: 10px;
+  margin: 8px 0;
+  padding: 12px;
   border-radius: 8px;
-  max-width: 80%;
+  width: 100%;
   word-wrap: break-word;
 }
 
 .sent {
-  background-color: #4caf50;
+  background-color: #2957fc76;
   align-self: flex-end;
-  text-align: right;
 }
 
 .received {
-  background-color: #2196f3;
+  background-color: #00ff9d76; /* Discord blue */
   align-self: flex-start;
   text-align: left;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #b9bbbe;
+}
+
+.sender-name {
+  font-weight: bold;
+}
+
+.message-time {
+  color: #ffffff;
 }
 
 .message-content {
   color: #fff;
   font-size: 14px;
+  word-wrap: break-word;
 }
 
 .message-form {
   display: flex;
   padding: 10px;
-  border-top: 1px solid #ddd;
-  background-color: #333;
+  border-top: 1px solid #444;
+  background-color: #2f3136;
 }
 
 .message-input {
   flex: 1;
   padding: 10px;
   border-radius: 4px;
-  border: 1px solid #ccc;
-  background-color: #444;
+  border: 1px solid #444;
+  background-color: #3e444e;
   color: #fff;
 }
 

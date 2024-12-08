@@ -29,8 +29,16 @@ class AuthController {
       // Write user data to a separate file
       await fs.writeFile(userPath, JSON.stringify(newUser, null, 2), "utf8");
 
+      // Generate JWT token after user registration
+      const token = jwt.sign(
+        { id: newUser.id, username: newUser.username },
+        process.env.JWT_SECRET || "default_secret",
+        { expiresIn: "24h" }
+      );
+
       return {
         message: "User registered successfully",
+        token, // Return the token along with the user info
         user: { id: newUser.id, username: newUser.username },
       };
     } catch (error) {

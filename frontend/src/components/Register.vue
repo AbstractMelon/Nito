@@ -48,8 +48,17 @@ export default {
       }
 
       try {
-        await AuthService.register(username.value, password.value);
-        router.push("/auth");
+        // Call register and receive the token in the response
+        const response = await AuthService.register(
+          username.value,
+          password.value
+        );
+
+        // Store the JWT token in local storage
+        localStorage.setItem("token", response.token);
+
+        // Redirect the user to the dashboard
+        router.push("/dashboard");
       } catch (err) {
         error.value = err.message || "Registration failed";
       }

@@ -10,5 +10,11 @@
     "username": "test",
     "password": "$2b$10$kFMnYEn83ncZ9wmkyXzJGeD9Y7eZesi2WPouVTkDO.H9Z/oL0qXSi",
     "createdAt": "2024-12-08T01:38:48.978Z"
+  },
+  {
+    "id": "59dae999-4fe0-4b9c-a448-1d795c57c4ad",
+    "username": "testing",
+    "password": "$2b$10$N0ATwnrnY/lp.tBvPZEfv.KJ2tmBv8uv8X8XKfGieFgoRm5a.4LUy",
+    "createdAt": "2024-12-08T02:27:58.392Z"
   }
 ]

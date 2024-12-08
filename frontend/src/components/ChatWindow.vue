@@ -41,17 +41,20 @@ export default {
 
     // Fetch messages for the selected user
     const fetchMessages = async () => {
-      const userId = props.selectedUser.id; // Use the selected user's ID
-      const response = await MessageService.getMessages(userId);
-      console.log(response);
+      if (props.selectedUser && props.selectedUser.id) {
+        const userId = props.selectedUser.id; // Use the selected user's ID
+        const response = await MessageService.getMessages(userId);
+        console.log(response);
 
-      const decryptedMessages = await Promise.all(
-        response.map(async (message) => {
-          return { ...message, text: message.content };
-        })
-      );
+        const decryptedMessages = await Promise.all(
+          response.map(async (message) => {
+            return { ...message, text: message.content };
+          })
+        );
 
-      messages.value = decryptedMessages;
+        messages.value = decryptedMessages;
+        scrollToBottom();
+      }
     };
 
     const sendMessage = async () => {
@@ -69,14 +72,18 @@ export default {
       }
     };
 
-    onMounted(() => {
-      fetchMessages();
-      scrollToBottom();
+    // Automatically fetch messages whenever selectedUser changes
+    watchEffect(() => {
+      if (props.selectedUser) {
+        fetchMessages(); // Fetch messages when selectedUser changes
+      }
     });
 
-    watch(props.selectedUser, () => {
-      fetchMessages(); // Fetch messages when selectedUser changes
-      scrollToBottom();
+    onMounted(() => {
+      // Initial fetch in case there is already a selected user
+      if (props.selectedUser) {
+        fetchMessages();
+      }
     });
 
     return {

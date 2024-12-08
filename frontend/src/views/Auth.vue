@@ -15,8 +15,10 @@
       </button>
     </div>
 
-    <Login v-if="currentView === 'login'" />
-    <Register v-else-if="currentView === 'register'" />
+    <div class="form-container">
+      <Login v-if="currentView === 'login'" />
+      <Register v-else-if="currentView === 'register'" />
+    </div>
   </div>
 </template>
 
@@ -36,12 +38,13 @@ export default {
 
 <style scoped>
 .auth-container {
-  display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  height: fit-content;
   background-color: #121212;
   color: #e0e0e0;
+  margin: auto;
+  margin-top: 25vh;
 }
 
 .auth-toggle {
@@ -58,22 +61,31 @@ export default {
   margin-right: 10px;
   border-radius: 5px;
   color: #e0e0e0;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .auth-toggle button.active {
   background-color: #ff6f61;
   color: #fff;
+  transform: scale(1.05);
 }
 
 .auth-toggle button:hover {
   background-color: #e65c54;
 }
 
-.auth-container > div {
+.form-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.auth-container {
   background-color: #1d1d1d;
   padding: 40px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: fit-content;
 }
 </style>

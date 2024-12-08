@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Home from "./views/Home.vue";
-import Dashboard from "./views/Dashboard.vue";
+import Chat from "./views/Chat.vue";
 import Auth from "./views/Auth.vue";
 
 const routes = [
@@ -10,8 +10,8 @@ const routes = [
     meta: { requiresAuth: false },
   },
   {
-    path: "/dashboard",
-    component: Dashboard,
+    path: "/chat",
+    component: Chat,
     meta: { requiresAuth: true },
   },
   {
@@ -32,7 +32,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !isAuthenticated) {
     next("/auth");
   } else if (to.path === "/auth" && isAuthenticated) {
-    next("/dashboard");
+    next("/chat");
   } else {
     next();
   }

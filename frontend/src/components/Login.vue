@@ -35,7 +35,7 @@ export default {
     const handleLogin = async () => {
       try {
         await AuthService.login(username.value, password.value);
-        router.push("/dashboard");
+        router.push("/chat");
       } catch (err) {
         error.value = err.message || "Login failed";
       }

@@ -57,8 +57,8 @@ export default {
         // Store the JWT token in local storage
         localStorage.setItem("token", response.token);
 
-        // Redirect the user to the dashboard
-        router.push("/dashboard");
+        // Redirect the user to the chat page
+        router.push("/chat");
       } catch (err) {
         error.value = err.message || "Registration failed";
       }

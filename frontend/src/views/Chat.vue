@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard">
+  <div class="chat">
     <div class="user-list">
       <h2>Users</h2>
       <div
@@ -53,7 +53,7 @@ export default {
 </script>
 
 <style scoped>
-.dashboard {
+.chat {
   margin-top: 5px;
   display: flex;
   padding: 10px;

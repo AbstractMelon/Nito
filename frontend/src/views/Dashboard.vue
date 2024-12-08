@@ -57,13 +57,13 @@ export default {
   margin-top: 5px;
   display: flex;
   padding: 10px;
-  background-color: #121212;
-  color: #e0e0e0;
+  background-color: var(--background-dark);
+  color: var(--text-light);
 }
 
 .user-list {
   flex: 1;
-  background-color: #242424;
+  background-color: var(--background-light);
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -74,7 +74,7 @@ export default {
 .user-list h2 {
   margin-bottom: 20px;
   font-size: 1.8rem;
-  color: #ff6f61;
+  color: var(--primary-color);
 }
 
 .user-list div {
@@ -86,19 +86,19 @@ export default {
 }
 
 .user-list div:hover {
-  background-color: #ff6f61;
+  background-color: var(--primary-color);
   color: #fff;
 }
 
 .selected {
-  background-color: #ff6f61;
+  background-color: var(--primary-color);
   color: #fff;
 }
 
 .chat-area {
   flex: 2;
   margin-left: 20px;
-  background-color: #1d1d1d;
+  background-color: var(--background-light);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }

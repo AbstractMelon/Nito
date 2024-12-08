@@ -44,21 +44,18 @@ export default {
     const messageContainer = ref(null);
     let messageInterval = null;
 
-    // Manually format the timestamp into a more readable format (e.g., 12:33 AM)
     const formatTimestamp = (timestamp) => {
       const date = new Date(timestamp);
       const hours = date.getHours();
       const minutes = date.getMinutes();
       const ampm = hours >= 12 ? "PM" : "AM";
 
-      // Convert hours from 24-hour format to 12-hour format
       const formattedHours = hours % 12 || 12;
       const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
 
       return `${formattedHours}:${formattedMinutes} ${ampm}`;
     };
 
-    // Fetch messages for the selected user
     const fetchMessages = async () => {
       if (props.selectedUser && props.selectedUser.id) {
         const userId = props.selectedUser.id;
@@ -66,14 +63,14 @@ export default {
 
         const decryptedMessages = await Promise.all(
           response.map(async (message) => {
-            const isSender = message.senderId === userId; // Check if the current user is the sender
-            const senderName = isSender ? "You" : props.selectedUser.username; // Use the selected user's name for received messages
+            const isSender = message.senderId === userId;
+            const senderName = isSender ? "You" : props.selectedUser.username;
             return {
               ...message,
               text: message.content,
-              senderName, // Use dynamic sender name
+              senderName,
               timestamp: message.timestamp,
-              isSender, // Mark message as sent or received
+              isSender,
             };
           })
         );
@@ -99,23 +96,19 @@ export default {
       }
     };
 
-    // Automatically fetch messages whenever selectedUser changes
     watchEffect(() => {
       if (props.selectedUser) {
         fetchMessages();
       }
     });
 
-    // Start the message fetch interval when the component is mounted
     onMounted(() => {
       if (props.selectedUser) {
         fetchMessages();
-        // Fetch messages every 1 second
         messageInterval = setInterval(fetchMessages, 1000);
       }
     });
 
-    // Clean up the interval when the component is unmounted
     onUnmounted(() => {
       if (messageInterval) {
         clearInterval(messageInterval);
@@ -142,7 +135,7 @@ export default {
 }
 
 .chat-window {
-  background-color: #2f3136; /* Discord dark background */
+  background-color: var(--background-gray);
   border-radius: 8px;
   width: 100%;
   height: 85vh;
@@ -169,13 +162,15 @@ export default {
 }
 
 .sent {
-  background-color: #2957fc76;
+  background-color: var(--message-sent);
   align-self: flex-end;
+  color: #fff;
 }
 
 .received {
-  background-color: #00ff9d76; /* Discord blue */
+  background-color: var(--message-received);
   align-self: flex-start;
+  color: #fff;
   text-align: left;
 }
 
@@ -183,7 +178,7 @@ export default {
   display: flex;
   justify-content: space-between;
   font-size: 12px;
-  color: #b9bbbe;
+  color: var(--gray-light);
 }
 
 .sender-name {
@@ -204,7 +199,7 @@ export default {
   display: flex;
   padding: 10px;
   border-top: 1px solid #444;
-  background-color: #2f3136;
+  background-color: var(--background-dark);
 }
 
 .message-input {
@@ -212,21 +207,22 @@ export default {
   padding: 10px;
   border-radius: 4px;
   border: 1px solid #444;
-  background-color: #3e444e;
-  color: #fff;
+  background-color: var(--background-light);
+  color: var(--text-light);
 }
 
 .send-button {
-  background-color: #4caf50;
+  background-color: var(--primary-color);
   color: #fff;
   padding: 10px 15px;
   margin-left: 10px;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .send-button:hover {
-  background-color: #45a049;
+  background-color: var(--secondary-color);
 }
 </style>

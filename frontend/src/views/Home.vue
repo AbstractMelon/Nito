@@ -58,21 +58,21 @@ export default {
 <style scoped>
 .home {
   font-family: "Arial", sans-serif;
-  background-color: #121212;
-  color: #e0e0e0;
+  background-color: var(--background-dark);
+  color: var(--text-light);
 }
 
 .hero {
   text-align: center;
   padding: 80px 20px;
-  background-color: #1d1d1d;
+  background-color: var(--background-light);
   color: #fff;
 }
 
 .hero h1 {
   font-size: 3.5rem;
   margin-bottom: 20px;
-  color: #ff6f61;
+  color: var(--primary-color);
 }
 
 .hero p {
@@ -83,26 +83,26 @@ export default {
 .cta-button {
   padding: 12px 25px;
   font-size: 1.1rem;
-  background-color: #ff6f61;
+  background-color: var(--primary-color);
   color: #fff;
   border-radius: 5px;
   transition: background-color 0.3s ease;
 }
 
 .cta-button:hover {
-  background-color: #e65c54;
+  background-color: var(--secondary-color);
 }
 
 .features {
   text-align: center;
   padding: 40px 20px;
-  background-color: #242424;
+  background-color: var(--background-dark);
 }
 
 .features h2 {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #ff6f61;
+  color: var(--primary-color);
 }
 
 .feature-list {
@@ -117,16 +117,16 @@ export default {
 
 .feature-item h3 {
   font-size: 1.5rem;
-  color: #ff6f61;
+  color: var(--primary-color);
   margin-bottom: 10px;
 }
 
 .feature-item p {
-  color: #bbb;
+  color: var(--gray-light);
 }
 
 .how-it-works {
-  background-color: #1d1d1d;
+  background-color: var(--background-light);
   padding: 40px 20px;
   text-align: center;
 }
@@ -134,7 +134,7 @@ export default {
 .how-it-works h2 {
   font-size: 2rem;
   margin-bottom: 20px;
-  color: #ff6f61;
+  color: var(--primary-color);
 }
 
 .how-it-works ol {
@@ -142,7 +142,7 @@ export default {
   max-width: 600px;
   margin: 0 auto;
   font-size: 1.1rem;
-  color: #bbb;
+  color: var(--gray-light);
 }
 
 .how-it-works li {
@@ -151,8 +151,8 @@ export default {
 }
 
 .footer {
-  background-color: #121212;
-  color: #bbb;
+  background-color: var(--background-dark);
+  color: var(--gray-light);
   text-align: center;
   padding: 20px;
 }
@@ -167,13 +167,13 @@ export default {
 
 .social-icon {
   margin: 0 10px;
-  color: #bbb;
+  color: var(--gray-light);
   text-decoration: none;
   font-size: 1.1rem;
 }
 
 .social-icon:hover {
-  color: #ff6f61;
+  color: var(--primary-color);
 }
 
 /* Mobile responsiveness */

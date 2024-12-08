@@ -1,4 +1,18 @@
-/* Global Styles (add to your main.css or a global styles file) */
+:root {
+  --primary-color: #ff6f61;
+  --secondary-color: #e65c54;
+  --background-dark: #121212;
+  --background-light: #1d1d1d;
+  --background-gray: #232323;
+  --accent: #e74c3c;
+  --text-light: #e0e0e0;
+  --text-dark: #333;
+  --gray-light: #bbb;
+  --button-hover: #0056b3;
+  --message-sent: #007bff;
+  --message-received: #28a745;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -7,8 +21,8 @@
 }
 
 body {
-  background-color: #121212;
-  color: #333;
+  background-color: var(--background-dark);
+  color: var(--text-dark);
   line-height: 1.6;
   font-size: 16px;
 }

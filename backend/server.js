@@ -33,14 +33,11 @@ const messageRoutes = require("./routes/messageRoutes");
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-// Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    message: "Internal server error",
-    error: process.env.NODE_ENV === "development" ? err.message : {},
-  });
-});
+// Import error handling middleware
+const errorHandlingMiddleware = require("./middleware/ErrorHandling");
+
+// Use the error handling middleware
+app.use(errorHandlingMiddleware);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

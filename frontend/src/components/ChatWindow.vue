@@ -31,7 +31,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watchEffect } from "vue";
+import { ref, onMounted, onUnmounted, watchEffect } from "vue";
 import MessageService from "../services/MessageService";
 
 export default {
@@ -42,6 +42,7 @@ export default {
     const messages = ref([]);
     const newMessage = ref("");
     const messageContainer = ref(null);
+    let messageInterval = null;
 
     // Manually format the timestamp into a more readable format (e.g., 12:33 AM)
     const formatTimestamp = (timestamp) => {
@@ -66,11 +67,11 @@ export default {
         const decryptedMessages = await Promise.all(
           response.map(async (message) => {
             const isSender = message.senderId === userId; // Check if the current user is the sender
-            const senderName = isSender ? "Other User" : "You";
+            const senderName = isSender ? "You" : props.selectedUser.username; // Use the selected user's name for received messages
             return {
               ...message,
               text: message.content,
-              senderName, // Add sender name
+              senderName, // Use dynamic sender name
               timestamp: message.timestamp,
               isSender, // Mark message as sent or received
             };
@@ -88,6 +89,7 @@ export default {
         await MessageService.sendMessage(userId, newMessage.value);
         newMessage.value = "";
         await fetchMessages();
+        scrollToBottom();
       }
     };
 
@@ -104,9 +106,19 @@ export default {
       }
     });
 
+    // Start the message fetch interval when the component is mounted
     onMounted(() => {
       if (props.selectedUser) {
         fetchMessages();
+        // Fetch messages every 1 second
+        messageInterval = setInterval(fetchMessages, 1000);
+      }
+    });
+
+    // Clean up the interval when the component is unmounted
+    onUnmounted(() => {
+      if (messageInterval) {
+        clearInterval(messageInterval);
       }
     });
 

@@ -54,6 +54,7 @@ export default {
 
 <style scoped>
 .dashboard {
+  margin-top: 5px;
   display: flex;
   padding: 10px;
   background-color: #121212;

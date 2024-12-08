@@ -10,10 +10,25 @@
       >
         {{ user.username }}
       </div>
+
+      <!-- Add User Button at the bottom of the list -->
+      <button class="add-user-btn" @click="showAddUserModal = true">
+        Add User
+      </button>
     </div>
 
     <div class="chat-area" v-if="selectedUser">
       <ChatWindow :selectedUser="selectedUser" />
+    </div>
+
+    <!-- Add User Modal -->
+    <div v-if="showAddUserModal" class="modal">
+      <div class="modal-content">
+        <h3>Add User</h3>
+        <input type="text" v-model="newUserId" placeholder="Enter user ID" />
+        <button @click="addUser">Add</button>
+        <button @click="showAddUserModal = false">Cancel</button>
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +43,8 @@ export default {
   setup() {
     const users = ref([]);
     const selectedUser = ref(null);
+    const showAddUserModal = ref(false); // Controls modal visibility
+    const newUserId = ref(""); // New user ID input value
 
     const loadUsers = async () => {
       try {
@@ -41,12 +58,28 @@ export default {
       selectedUser.value = user;
     };
 
+    const addUser = async () => {
+      if (newUserId.value.trim()) {
+        try {
+          await AuthService.addUser(newUserId.value); // Add user service call
+          users.value.push({ id: newUserId.value, username: newUserId.value });
+          newUserId.value = ""; // Clear input after adding
+          showAddUserModal.value = false; // Close modal
+        } catch (error) {
+          console.error("Failed to add user", error);
+        }
+      }
+    };
+
     onMounted(loadUsers);
 
     return {
       users,
       selectedUser,
       selectUser,
+      showAddUserModal,
+      newUserId,
+      addUser,
     };
   },
 };
@@ -69,6 +102,8 @@ export default {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   max-width: 40vh;
   height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .user-list h2 {
@@ -95,11 +130,69 @@ export default {
   color: #fff;
 }
 
+.add-user-btn {
+  margin-top: auto; /* Pushes the button to the bottom */
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-user-btn:hover {
+  background-color: var(--primary-color-dark);
+}
+
 .chat-area {
   flex: 2;
   margin-left: 20px;
   background-color: var(--background-light);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal Styles */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: var(--background-gray);
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  text-align: center;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.modal-content button {
+  padding: 8px 15px;
+  margin: 5px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.modal-content button:hover {
+  background-color: var(--primary-color-dark);
 }
 </style>

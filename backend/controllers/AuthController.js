@@ -6,25 +6,28 @@ const EncryptionUtil = require("../utils/encryption");
 
 class AuthController {
   static async register(username, password) {
-    const usersPath = path.join(__dirname, "../../database/users.json");
+    const userDir = path.join(__dirname, "../../database/users");
 
     try {
-      const users = JSON.parse(await fs.readFile(usersPath, "utf8"));
+      // Generate UUIDv4 for the user id
+      const id = uuidv4();
+
+      const userPath = path.join(userDir, `user-${username}-${id}.json`);
 
       // Check if username exists
-      if (users.find((u) => u.username === username)) {
+      if (await fs.stat(userPath).catch(() => false)) {
         throw new Error("Username already exists");
       }
 
       const newUser = {
-        id: uuidv4(),
+        id: id,
         username,
         password: EncryptionUtil.hashPassword(password),
         createdAt: new Date().toISOString(),
       };
 
-      users.push(newUser);
-      await fs.writeFile(usersPath, JSON.stringify(users, null, 2));
+      // Write user data to a separate file
+      await fs.writeFile(userPath, JSON.stringify(newUser, null, 2), "utf8");
 
       return {
         message: "User registered successfully",
@@ -36,22 +39,38 @@ class AuthController {
   }
 
   static async login(username, password) {
-    const usersPath = path.join(__dirname, "../../database/users.json");
+    const userDir = path.join(__dirname, "../../database/users");
 
     try {
-      const users = JSON.parse(await fs.readFile(usersPath, "utf8"));
-      const user = users.find((u) => u.username === username);
+      // Read the user directory
+      const files = await fs.readdir(userDir);
 
+      // Find the file that corresponds to the username
+      const userFile = files.find((file) => file.includes(`user-${username}-`));
+
+      // If no matching file found, throw an error
+      if (!userFile) {
+        throw new Error("Invalid username or password");
+      }
+
+      // Read the user data from the file
+      const user = JSON.parse(
+        await fs.readFile(path.join(userDir, userFile), "utf8")
+      );
+
+      // Validate the password
       if (!user || !EncryptionUtil.comparePassword(password, user.password)) {
         throw new Error("Invalid credentials");
       }
 
+      // Generate JWT token
       const token = jwt.sign(
         { id: user.id, username: user.username },
         process.env.JWT_SECRET || "default_secret",
         { expiresIn: "24h" }
       );
 
+      // Return login success response with the token and user info
       return {
         message: "Login successful",
         token,
@@ -63,14 +82,20 @@ class AuthController {
   }
 
   static async getAllUsers() {
-    const usersPath = path.join(__dirname, "../../database/users.json");
+    const userDir = path.join(__dirname, "../../database/users");
 
     try {
-      const users = JSON.parse(await fs.readFile(usersPath, "utf8"));
-      return users.map((user) => ({
-        id: user.id,
-        username: user.username,
-      }));
+      const files = await fs.readdir(userDir);
+      const users = await Promise.all(
+        files.map(async (file) => {
+          const user = JSON.parse(
+            await fs.readFile(path.join(userDir, file), "utf8")
+          );
+          return { id: user.id, username: user.username };
+        })
+      );
+
+      return users;
     } catch (error) {
       throw error;
     }

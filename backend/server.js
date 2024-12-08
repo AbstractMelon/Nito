@@ -11,21 +11,14 @@ const PORT = process.env.PORT || 3000;
 
 // Make sure database directories exist
 const dbPaths = [
-  path.join(__dirname, "../database/users.json"),
-  path.join(__dirname, "../database/messages.json"),
+  path.join(__dirname, "../database/users/"),
+  path.join(__dirname, "../database/chats/"),
 ];
 
 dbPaths.forEach((dbPath) => {
-  const dirPath = path.dirname(dbPath); // Get the directory path
-
   // Make sure the directory exists
-  if (!fs.existsSync(dirPath)) {
-    fs.mkdirSync(dirPath, { recursive: true }); // Create directory
-  }
-
-  // If the file doesn't exist, create it
   if (!fs.existsSync(dbPath)) {
-    fs.writeFileSync(dbPath, JSON.stringify([]), "utf8");
+    fs.mkdirSync(dbPath, { recursive: true });
   }
 });
 

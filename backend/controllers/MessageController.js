@@ -4,24 +4,35 @@ const { v4: uuidv4 } = require("uuid");
 const EncryptionUtil = require("../utils/encryption");
 
 class MessageController {
-  static async sendMessage(senderId, receiverId, content) {
-    const messagesPath = path.join(__dirname, "../../database/messages.json");
+  // Utility to get the file path for a conversation
+  static getChatFilePath(user1, user2) {
+    const chatDir = path.join(__dirname, "../../database/chats");
+    const [id1, id2] = [user1, user2].sort();
+    return path.join(chatDir, `chat-${id1}-${id2}.json`);
+  }
+
+  static async sendMessage(user1, user2, content) {
+    const chatPath = this.getChatFilePath(user1, user2);
 
     try {
-      const messages = JSON.parse(await fs.readFile(messagesPath, "utf8"));
+      // Load existing messages or initialize
+      let messages = [];
+      if (await fs.stat(chatPath).catch(() => false)) {
+        messages = JSON.parse(await fs.readFile(chatPath, "utf8"));
+      }
 
       const encryptedContent = EncryptionUtil.encrypt(content);
 
       const newMessage = {
         id: uuidv4(),
-        senderId,
-        receiverId,
+        senderId: user1,
+        receiverId: user2,
         content: encryptedContent,
         timestamp: new Date().toISOString(),
       };
 
       messages.push(newMessage);
-      await fs.writeFile(messagesPath, JSON.stringify(messages, null, 2));
+      await fs.writeFile(chatPath, JSON.stringify(messages, null, 2), "utf8");
 
       return newMessage;
     } catch (error) {
@@ -29,30 +40,26 @@ class MessageController {
     }
   }
 
-  static async getMessages(userId, otherUserId) {
-    const messagesPath = path.join(__dirname, "../../database/messages.json");
+  static async getMessages(user1, user2) {
+    const chatPath = this.getChatFilePath(user1, user2);
 
     try {
-      const messages = JSON.parse(await fs.readFile(messagesPath, "utf8"));
+      if (!(await fs.stat(chatPath).catch(() => false))) {
+        return []; // No messages if file doesn't exist
+      }
 
-      const userMessages = messages
-        .filter(
-          (msg) =>
-            (msg.senderId === userId && msg.receiverId === otherUserId) ||
-            (msg.senderId === otherUserId && msg.receiverId === userId)
-        )
-        .map((msg) => ({
-          ...msg,
-          content: msg.content.content
-            ? EncryptionUtil.decrypt(
-                msg.content.content,
-                msg.content.key,
-                msg.content.iv
-              )
-            : msg.content,
-        }));
+      const messages = JSON.parse(await fs.readFile(chatPath, "utf8"));
 
-      return userMessages;
+      return messages.map((msg) => ({
+        ...msg,
+        content: msg.content.content
+          ? EncryptionUtil.decrypt(
+              msg.content.content,
+              msg.content.key,
+              msg.content.iv
+            )
+          : msg.content,
+      }));
     } catch (error) {
       throw error;
     }

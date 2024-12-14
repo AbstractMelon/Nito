@@ -1,0 +1,25 @@
+{
+  "name": "nito",
+  "version": "1.0.0",
+  "description": "Private chat app",
+  "main": "run.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix frontend\" \"npm run dev --prefix backend\"",
+    "prod": "concurrently \"npm run prod --prefix frontend\" \"npm run prod --prefix backend\"",
+    "build": "concurrently \"npm run build --prefix frontend\" \"npm run build --prefix backend\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbstractMelon/Nito.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbstractMelon/Nito/issues"
+  },
+  "homepage": "https://github.com/AbstractMelon/Nito#readme",
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  }
+}
